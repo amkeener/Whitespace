@@ -22,7 +22,8 @@ Notes:
 * install instructions for ubuntu 14.04
 
 Install Hackrf one, if using another SDR you can skip
-Also see: installing hackrf as per: https://mborgerson.com/getting-started-with-the-hackrf-one-on-ubuntu-14-04
+Also see: installing hackrf as per: 
+https://mborgerson.com/getting-started-with-the-hackrf-one-on-ubuntu-14-04
 1. $ apt-get update
 2. $ apt-get upgrade
 3. $ apt-get install hackrf
