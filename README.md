@@ -43,19 +43,19 @@ At this point you should be able to test your hackrf
 1. $ hackrf_info
 
 Install Pybombs see: https://github.com/gnuradio/pybombs/ for troubleshooting
-4. $ pip install pybombs
-5.  pip install [--upgrade] git+https://github.com/gnuradio/pybombs.git
+1. $ pip install pybombs
+2.  pip install [--upgrade] git+https://github.com/gnuradio/pybombs.git
 
 Add recipes for pybombs
-6. $ pybombs recipes add gr-recipes git+https://github.com/gnuradio/gr-recipes.git
-7. $ pybombs recipes add gr-etcetera git+https://github.com/gnuradio/gr-etcetera.git
+1. $ pybombs recipes add gr-recipes git+https://github.com/gnuradio/gr-recipes.git
+2. $ pybombs recipes add gr-etcetera git+https://github.com/gnuradio/gr-etcetera.git
 
 Install GNU Radio with pybombs
-8. $ pybombs prefix init ~/prefix -a myprefix -R gnuradio-default
+1. $ pybombs prefix init ~/prefix -a myprefix -R gnuradio-default
 
 Setup your prefix and run GRC
-9. $ source ~/prefix/setup_env.sh
-10. $ gnuradio-companion
+1. $ source ~/prefix/setup_env.sh
+2. $ gnuradio-companion
 
 
 
