@@ -5,9 +5,8 @@
 * Andrew Keener - Author
 
 #### Stages
-1. Development (dev) - Experimental and initial commits
-2. Test (test) - TODO
-3. Stable (Master) - TODO
+1. Test (test) - Experimental and initial commits
+2. Stable (Master) - TODO
 
 #### Technical Details
 ##### App
