@@ -3,7 +3,7 @@
 # Gnuradio Python Flow Graph
 # Title: Hackrf white space 
 # Description: Example of an OFDM Transmitter
-# Generated: Tue Apr 11 09:30:47 2017
+# Generated: Tue Apr 11 13:09:50 2017
 ##################################################
 
 from PyQt4 import Qt
@@ -77,24 +77,35 @@ class tx_hackrf(gr.top_block, Qt.QWidget):
         self.osmosdr_sink_0.set_bandwidth(0, 0)
           
         self.fft_vxx_0 = fft.fft_vcc(fft_len, False, (()), True, 1)
+        self.digital_packet_headergenerator_bb_default_0 = digital.packet_headergenerator_bb(96, "packet_len")
         self.digital_ofdm_cyclic_prefixer_0 = digital.ofdm_cyclic_prefixer(fft_len, fft_len+fft_len/4, rolloff, length_tag_key)
         self.digital_ofdm_carrier_allocator_cvc_0 = digital.ofdm_carrier_allocator_cvc(fft_len, occupied_carriers, pilot_carriers, pilot_symbols, (sync_word1, sync_word2), length_tag_key)
+        self.digital_crc32_bb_0 = digital.crc32_bb(False, length_tag_key)
         self.digital_chunks_to_symbols_xx_0_0 = digital.chunks_to_symbols_bc((payload_mod.points()), 1)
+        self.digital_chunks_to_symbols_xx_0 = digital.chunks_to_symbols_bc((header_mod.points()), 1)
+        self.blocks_tagged_stream_mux_0 = blocks.tagged_stream_mux(gr.sizeof_gr_complex*1, length_tag_key, 0)
         self.blocks_tag_gate_0 = blocks.tag_gate(gr.sizeof_gr_complex * 1, False)
+        self.blocks_repack_bits_bb_0 = blocks.repack_bits_bb(8, payload_mod.bits_per_symbol(), length_tag_key, False)
         self.blocks_pdu_to_tagged_stream_0 = blocks.pdu_to_tagged_stream(blocks.byte_t, "packet_len")
         self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vcc((0.05, ))
-        self.blocks_message_strobe_0_0 = blocks.message_strobe(pmt.cons( pmt.PMT_NIL, pmt.make_u8vector(64,0) ), 20)
+        self.blocks_message_strobe_0_0 = blocks.message_strobe(pmt.intern("PDU Test"), 20)
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.digital_chunks_to_symbols_xx_0_0, 0), (self.digital_ofdm_carrier_allocator_cvc_0, 0))
+        self.connect((self.digital_packet_headergenerator_bb_default_0, 0), (self.digital_chunks_to_symbols_xx_0, 0))
+        self.connect((self.digital_chunks_to_symbols_xx_0, 0), (self.blocks_tagged_stream_mux_0, 0))
+        self.connect((self.digital_chunks_to_symbols_xx_0_0, 0), (self.blocks_tagged_stream_mux_0, 1))
+        self.connect((self.blocks_repack_bits_bb_0, 0), (self.digital_chunks_to_symbols_xx_0_0, 0))
+        self.connect((self.blocks_pdu_to_tagged_stream_0, 0), (self.digital_crc32_bb_0, 0))
+        self.connect((self.digital_crc32_bb_0, 0), (self.blocks_repack_bits_bb_0, 0))
+        self.connect((self.digital_crc32_bb_0, 0), (self.digital_packet_headergenerator_bb_default_0, 0))
+        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_tag_gate_0, 0))
+        self.connect((self.digital_ofdm_cyclic_prefixer_0, 0), (self.blocks_multiply_const_vxx_0, 0))
+        self.connect((self.blocks_tag_gate_0, 0), (self.osmosdr_sink_0, 0))
+        self.connect((self.blocks_tagged_stream_mux_0, 0), (self.digital_ofdm_carrier_allocator_cvc_0, 0))
         self.connect((self.fft_vxx_0, 0), (self.digital_ofdm_cyclic_prefixer_0, 0))
         self.connect((self.digital_ofdm_carrier_allocator_cvc_0, 0), (self.fft_vxx_0, 0))
-        self.connect((self.blocks_tag_gate_0, 0), (self.osmosdr_sink_0, 0))
-        self.connect((self.digital_ofdm_cyclic_prefixer_0, 0), (self.blocks_multiply_const_vxx_0, 0))
-        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_tag_gate_0, 0))
-        self.connect((self.blocks_pdu_to_tagged_stream_0, 0), (self.digital_chunks_to_symbols_xx_0_0, 0))
 
         ##################################################
         # Asynch Message Connections
