@@ -3,7 +3,7 @@
 # Gnuradio Python Flow Graph
 # Title: HackRF Whitespace OFDM
 # Description: Example of an OFDM utilizing white space frequencies and the hackrf one
-# Generated: Mon Apr 10 14:15:25 2017
+# Generated: Tue Apr 11 09:35:28 2017
 ##################################################
 
 from PyQt4 import Qt
@@ -23,7 +23,7 @@ import sys
 
 class rxtx_hackrf(gr.top_block, Qt.QWidget):
 
-    def __init__(self, gain=5, freq=100e6):
+    def __init__(self, gain=5, freq=211.25e6):
         gr.top_block.__init__(self, "HackRF Whitespace OFDM")
         Qt.QWidget.__init__(self)
         self.setWindowTitle("HackRF Whitespace OFDM")
@@ -66,7 +66,7 @@ class rxtx_hackrf(gr.top_block, Qt.QWidget):
         self.fft_len = fft_len = 64
         self.sync_word2 = sync_word2 = [0j, 0j, 0j, 0j, 0j, 0j, (-1+0j), (-1+0j), (-1+0j), (-1+0j), (1+0j), (1+0j), (-1+0j), (-1+0j), (-1+0j), (1+0j), (-1+0j), (1+0j), (1+0j), (1 +0j), (1+0j), (1+0j), (-1+0j), (-1+0j), (-1+0j), (-1+0j), (-1+0j), (1+0j), (-1+0j), (-1+0j), (1+0j), (-1+0j), 0j, (1+0j), (-1+0j), (1+0j), (1+0j), (1+0j), (-1+0j), (1+0j), (1+0j), (1+0j), (-1+0j), (1+0j), (1+0j), (1+0j), (1+0j), (-1+0j), (1+0j), (-1+0j), (-1+0j), (-1+0j), (1+0j), (-1+0j), (1+0j), (-1+0j), (-1+0j), (-1+0j), (-1+0j), 0j, 0j, 0j, 0j, 0j]
         self.sync_word1 = sync_word1 = [0., 0., 0., 0., 0., 0., 0., 1.41421356, 0., -1.41421356, 0., 1.41421356, 0., -1.41421356, 0., -1.41421356, 0., -1.41421356, 0., 1.41421356, 0., -1.41421356, 0., 1.41421356, 0., -1.41421356, 0., -1.41421356, 0., -1.41421356, 0., -1.41421356, 0., 1.41421356, 0., -1.41421356, 0., 1.41421356, 0., 1.41421356, 0., 1.41421356, 0., -1.41421356, 0., 1.41421356, 0., 1.41421356, 0., 1.41421356, 0., -1.41421356, 0., 1.41421356, 0., 1.41421356, 0., 1.41421356, 0., 0., 0., 0., 0., 0.]
-        self.samp_rate = samp_rate = 6e6
+        self.samp_rate = samp_rate = 1000
         self.payload_equalizer = payload_equalizer = digital.ofdm_equalizer_simpledfe(fft_len, payload_mod.base(), occupied_carriers, pilot_carriers, pilot_symbols, 1)
         self.packet_len = packet_len = 96
         self.header_formatter = header_formatter = digital.packet_header_ofdm(occupied_carriers, n_syms=1, len_tag_key=packet_length_tag_key, frame_len_tag_key=length_tag_key, bits_per_header_sym=header_mod.bits_per_symbol(), bits_per_payload_sym=payload_mod.bits_per_symbol(), scramble_header=False)
@@ -98,11 +98,10 @@ class rxtx_hackrf(gr.top_block, Qt.QWidget):
         self.digital_ofdm_frame_equalizer_vcvc_0 = digital.ofdm_frame_equalizer_vcvc(header_equalizer.base(), fft_len/4, length_tag_key, True, 1)
         self.digital_ofdm_chanest_vcvc_0 = digital.ofdm_chanest_vcvc((sync_word1), (sync_word2), 1, 0, 3, False)
         self.digital_header_payload_demux_0 = digital.header_payload_demux(3, fft_len, fft_len/4, length_tag_key, "", True, gr.sizeof_gr_complex)
-        self.digital_crc32_bb_0 = digital.crc32_bb(True, packet_length_tag_key)
         self.digital_constellation_decoder_cb_1 = digital.constellation_decoder_cb(payload_mod.base())
         self.digital_constellation_decoder_cb_0 = digital.constellation_decoder_cb(header_mod.base())
-        self.blocks_tag_debug_1 = blocks.tag_debug(gr.sizeof_char*1, "Rx Bytes", ""); self.blocks_tag_debug_1.set_display(True)
-        self.blocks_repack_bits_bb_0 = blocks.repack_bits_bb(payload_mod.bits_per_symbol(), 8, packet_length_tag_key, True)
+        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate)
+        self.blocks_tagged_stream_to_pdu_0 = blocks.tagged_stream_to_pdu(blocks.byte_t, "packet_len")
         self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
         self.blocks_message_debug_0 = blocks.message_debug()
         self.blocks_delay_0 = blocks.delay(gr.sizeof_gr_complex*1, fft_len+fft_len/4)
@@ -111,10 +110,7 @@ class rxtx_hackrf(gr.top_block, Qt.QWidget):
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.digital_constellation_decoder_cb_1, 0), (self.blocks_repack_bits_bb_0, 0))
         self.connect((self.digital_ofdm_serializer_vcc_payload, 0), (self.digital_constellation_decoder_cb_1, 0))
-        self.connect((self.blocks_repack_bits_bb_0, 0), (self.digital_crc32_bb_0, 0))
-        self.connect((self.digital_crc32_bb_0, 0), (self.blocks_tag_debug_1, 0))
         self.connect((self.fft_vxx_1, 0), (self.digital_ofdm_frame_equalizer_vcvc_1, 0))
         self.connect((self.digital_ofdm_frame_equalizer_vcvc_1, 0), (self.digital_ofdm_serializer_vcc_payload, 0))
         self.connect((self.digital_header_payload_demux_0, 1), (self.fft_vxx_1, 0))
@@ -127,16 +123,18 @@ class rxtx_hackrf(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_delay_0, 0), (self.blocks_multiply_xx_0, 1))
         self.connect((self.analog_frequency_modulator_fc_0, 0), (self.blocks_multiply_xx_0, 0))
         self.connect((self.digital_ofdm_sync_sc_cfb_0, 0), (self.analog_frequency_modulator_fc_0, 0))
+        self.connect((self.blocks_throttle_0, 0), (self.blocks_delay_0, 0))
+        self.connect((self.blocks_throttle_0, 0), (self.digital_ofdm_sync_sc_cfb_0, 0))
+        self.connect((self.osmosdr_source_0, 0), (self.blocks_throttle_0, 0))
         self.connect((self.blocks_multiply_xx_0, 0), (self.digital_header_payload_demux_0, 0))
         self.connect((self.digital_ofdm_sync_sc_cfb_0, 1), (self.digital_header_payload_demux_0, 1))
-        self.connect((self.osmosdr_source_0, 0), (self.digital_ofdm_sync_sc_cfb_0, 0))
-        self.connect((self.osmosdr_source_0, 0), (self.blocks_delay_0, 0))
+        self.connect((self.digital_constellation_decoder_cb_1, 0), (self.blocks_tagged_stream_to_pdu_0, 0))
 
         ##################################################
         # Asynch Message Connections
         ##################################################
         self.msg_connect(self.digital_packet_headerparser_b_0, "header_data", self.digital_header_payload_demux_0, "header_data")
-        self.msg_connect(self.digital_packet_headerparser_b_0, "header_data", self.blocks_message_debug_0, "print")
+        self.msg_connect(self.blocks_tagged_stream_to_pdu_0, "pdus", self.blocks_message_debug_0, "print_pdu")
 
 # QT sink close method reimplementation
     def closeEvent(self, event):
@@ -241,6 +239,7 @@ class rxtx_hackrf(gr.top_block, Qt.QWidget):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.osmosdr_source_0.set_sample_rate(self.samp_rate)
+        self.blocks_throttle_0.set_sample_rate(self.samp_rate)
 
     def get_payload_equalizer(self):
         return self.payload_equalizer
@@ -276,7 +275,7 @@ if __name__ == '__main__':
         except:
             print "Warning: failed to XInitThreads()"
     parser = OptionParser(option_class=eng_option, usage="%prog: [options]")
-    parser.add_option("-f", "--freq", dest="freq", type="eng_float", default=eng_notation.num_to_str(100e6),
+    parser.add_option("-f", "--freq", dest="freq", type="eng_float", default=eng_notation.num_to_str(211.25e6),
         help="Set Default Frequency [default=%default]")
     (options, args) = parser.parse_args()
     qapp = Qt.QApplication(sys.argv)

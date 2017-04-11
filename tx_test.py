@@ -4,7 +4,7 @@
 # Title: White space transceiver
 # Author: Andrew Keener
 # Description: Simple Hackrf Transciever for White space
-# Generated: Mon Apr 10 10:55:42 2017
+# Generated: Tue Apr 11 09:05:03 2017
 ##################################################
 
 from PyQt4 import Qt
@@ -24,7 +24,7 @@ import sys
 
 class tx_test(gr.top_block, Qt.QWidget):
 
-    def __init__(self, gain=10, freq=145.25e6):
+    def __init__(self, gain=5, freq=109e6):
         gr.top_block.__init__(self, "White space transceiver")
         Qt.QWidget.__init__(self)
         self.setWindowTitle("White space transceiver")
@@ -64,7 +64,7 @@ class tx_test(gr.top_block, Qt.QWidget):
         self.fft_len = fft_len = 64
         self.sync_word2 = sync_word2 = [0j, 0j, 0j, 0j, 0j, 0j, (-1+0j), (-1+0j), (-1+0j), (-1+0j), (1+0j), (1+0j), (-1+0j), (-1+0j), (-1+0j), (1+0j), (-1+0j), (1+0j), (1+0j), (1 +0j), (1+0j), (1+0j), (-1+0j), (-1+0j), (-1+0j), (-1+0j), (-1+0j), (1+0j), (-1+0j), (-1+0j), (1+0j), (-1+0j), 0j, (1+0j), (-1+0j), (1+0j), (1+0j), (1+0j), (-1+0j), (1+0j), (1+0j), (1+0j), (-1+0j), (1+0j), (1+0j), (1+0j), (1+0j), (-1+0j), (1+0j), (-1+0j), (-1+0j), (-1+0j), (1+0j), (-1+0j), (1+0j), (-1+0j), (-1+0j), (-1+0j), (-1+0j), 0j, 0j, 0j, 0j, 0j]
         self.sync_word1 = sync_word1 = [0., 0., 0., 0., 0., 0., 0., 1.41421356, 0., -1.41421356, 0., 1.41421356, 0., -1.41421356, 0., -1.41421356, 0., -1.41421356, 0., 1.41421356, 0., -1.41421356, 0., 1.41421356, 0., -1.41421356, 0., -1.41421356, 0., -1.41421356, 0., -1.41421356, 0., 1.41421356, 0., -1.41421356, 0., 1.41421356, 0., 1.41421356, 0., 1.41421356, 0., -1.41421356, 0., 1.41421356, 0., 1.41421356, 0., 1.41421356, 0., -1.41421356, 0., 1.41421356, 0., 1.41421356, 0., 1.41421356, 0., 0., 0., 0., 0., 0.]
-        self.samp_rate = samp_rate = 2e6
+        self.samp_rate = samp_rate = 1e6
         self.payload_equalizer = payload_equalizer = digital.ofdm_equalizer_simpledfe(fft_len, payload_mod.base(), occupied_carriers, pilot_carriers, pilot_symbols, 1)
         self.packet_length_tag_key = packet_length_tag_key = "packet_len"
         self.packet_len = packet_len = 96
@@ -75,7 +75,7 @@ class tx_test(gr.top_block, Qt.QWidget):
         ##################################################
         self.osmosdr_sink_0 = osmosdr.sink( args="numchan=" + str(1) + " " + "" )
         self.osmosdr_sink_0.set_sample_rate(samp_rate)
-        self.osmosdr_sink_0.set_center_freq(freq, 0)
+        self.osmosdr_sink_0.set_center_freq(109, 0)
         self.osmosdr_sink_0.set_freq_corr(0, 0)
         self.osmosdr_sink_0.set_gain(gain, 0)
         self.osmosdr_sink_0.set_if_gain(20, 0)
@@ -84,7 +84,7 @@ class tx_test(gr.top_block, Qt.QWidget):
         self.osmosdr_sink_0.set_bandwidth(0, 0)
           
         self.fft_vxx_0 = fft.fft_vcc(fft_len, False, (()), True, 1)
-        self.digital_ofdm_cyclic_prefixer_0 = digital.ofdm_cyclic_prefixer(fft_len, fft_len+fft_len/4, 2, length_tag_key)
+        self.digital_ofdm_cyclic_prefixer_0 = digital.ofdm_cyclic_prefixer(fft_len, fft_len+fft_len/4, 2, "packet_len")
         self.digital_ofdm_carrier_allocator_cvc_0 = digital.ofdm_carrier_allocator_cvc(fft_len, occupied_carriers, pilot_carriers, pilot_symbols, (sync_word1, sync_word2), "packet_len")
         self.digital_chunks_to_symbols_xx_0_0 = digital.chunks_to_symbols_bc((payload_mod.points()), 1)
         self.blocks_tag_gate_0 = blocks.tag_gate(gr.sizeof_gr_complex * 1, False)
@@ -126,7 +126,6 @@ class tx_test(gr.top_block, Qt.QWidget):
 
     def set_freq(self, freq):
         self.freq = freq
-        self.osmosdr_sink_0.set_center_freq(self.freq, 0)
 
     def get_pilot_symbols(self):
         return self.pilot_symbols
@@ -216,7 +215,7 @@ if __name__ == '__main__':
         except:
             print "Warning: failed to XInitThreads()"
     parser = OptionParser(option_class=eng_option, usage="%prog: [options]")
-    parser.add_option("-f", "--freq", dest="freq", type="eng_float", default=eng_notation.num_to_str(145.25e6),
+    parser.add_option("-f", "--freq", dest="freq", type="eng_float", default=eng_notation.num_to_str(109e6),
         help="Set Default Frequency [default=%default]")
     (options, args) = parser.parse_args()
     qapp = Qt.QApplication(sys.argv)
