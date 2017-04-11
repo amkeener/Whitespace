@@ -69,3 +69,13 @@ To Install:
 4. $ apt-get install gqrx
 
 If everything works and you can pick up radio stations you are good to go
+
+Running the  flow graphs with HackRF
+
+If you have two HackRF One boards and multiple machines you can simply run RX_PDU_OFDM.grc via gnuradio-companion on one machine, and TX_PDU_OFDM.grc on the other.
+
+If you want to run a transceiver you will have to combine the RX and TX graphs. You can simply drag and drop all the blocks from Rx to Tx. This will not leave much room for both RX and TX to be displayed and Blocks will end up on top of each other.
+
+With the HackRF One, the transceiver will work in half duplex mode as per the Hackrf one spec. You may need to add some synchronization cloks or schemes to sync one transceiver to another.
+
+I recommend getting RX and TX working seperately before trying a transceiver.
