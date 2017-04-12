@@ -1,5 +1,5 @@
-# White space network
-### A simple OFDM based network
+# A prototype White Space Network
+### A simple OFDM based network operating on TV band frequencies
 
 #### Contributors
 * Andrew Keener - Author
