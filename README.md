@@ -20,6 +20,8 @@
 Notes: 
 * all commands are ran as root (sudo is ommitted)
 * install instructions for ubuntu 14.04
+* During the execution of this project I found that the only reliable version of Ubuntu that played well with the Hackrf and Gnuradio was 14.04. I spent many an hour uninstalling, reinstalling, upgrading, and downgrading to figure this out. Use 14.04 if you can.
+
 
 Install Hackrf one, if using another SDR you can skip
 Also see: installing hackrf as per: 
@@ -41,10 +43,11 @@ Try:
 
 At this point you should be able to test your hackrf
 1. $ hackrf_info
+This command will display the firmware version, software, and serial. If this command doesn’t work you will have to try and install another version of the software or troubleshoot your USB ports/drivers.
 
 Install Pybombs see: https://github.com/gnuradio/pybombs/ for troubleshooting
 1. $ pip install pybombs
-2.  pip install [--upgrade] git+https://github.com/gnuradio/pybombs.git
+2. $ pip install [--upgrade] git+https://github.com/gnuradio/pybombs.git
 
 Add recipes for pybombs
 1. $ pybombs recipes add gr-recipes git+https://github.com/gnuradio/gr-recipes.git
@@ -76,6 +79,6 @@ If you have two HackRF One boards and multiple machines you can simply run RX_PD
 
 If you want to run a transceiver you will have to combine the RX and TX graphs. You can simply drag and drop all the blocks from Rx to Tx. This will not leave much room for both RX and TX to be displayed and Blocks will end up on top of each other.
 
-With the HackRF One, the transceiver will work in half duplex mode as per the Hackrf one spec. You may need to add some synchronization cloks or schemes to sync one transceiver to another.
+With the HackRF One, the transceiver will work in half duplex mode as per the Hackrf one spec. You may need to add some synchronization blocks or schemes to sync one transceiver to another.
 
 I recommend getting RX and TX working seperately before trying a transceiver.
